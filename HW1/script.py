@@ -40,7 +40,7 @@ def get_num_pronouns(message):
 def make_table(fname: str, m_list: list, f_list: list):
     zipped = list(itertools.zip_longest(m_list, f_list))
 
-    def _build_row(_row, debug: bool = False):
+    def _build_row(_row):
         return [f"{_row[0][0]}" if _row[0] is not None else "..", 
                 f"{_row[0][1]}" if _row[0] is not None else "..", 
                 f"{_row[1][0]}" if _row[1] is not None else "..", 
