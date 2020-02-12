@@ -1,7 +1,6 @@
 """
 Ivan Leon
 Social Computing Homework 1
-
 """
 import nltk
 import itertools
@@ -38,7 +37,7 @@ def get_num_pronouns(message):
 
     return num
 
-def make_table(m_list: list, f_list: list):
+def make_table(fname: str, m_list: list, f_list: list):
     zipped = list(itertools.zip_longest(m_list, f_list))
 
     def _build_row(_row, debug: bool = False):
@@ -47,17 +46,20 @@ def make_table(m_list: list, f_list: list):
                 f"{_row[1][0]}" if _row[1] is not None else "..", 
                 f"{_row[1][1]}" if _row[1] is not None else ".."]
 
-    with open("table.csv", "w") as file:
+    # write csv file 
+    with open(f"{fname.strip('.txt')}_table.csv", "w") as file:
         table = csv.writer(file)
         for row in zipped:
             table.writerow(_build_row(row))
-
-    print(f"\n{list(map(lambda p: p[1], f_list))}")
-    print(f"{list(map(lambda p: p[1], m_list))}")
+    
+    # print number of pronouns by person 
+    print("\nNumber of Pronouns by Person:")
+    print(f"F: {list(map(lambda p: p[1], f_list))}")
+    print(f"M: {list(map(lambda p: p[1], m_list))}")
 
 
 def main(filename):
-    with open("Feb17_GroupA.txt") as f:
+    with open(filename) as f:
         content = f.readlines()
 
     people = {}
@@ -94,6 +96,7 @@ def main(filename):
     m = []
     f_index = 0
     m_index = 0
+
     # update number of prp and number of gender 
     for person in people.keys():
         if people[person]["gender"] == "F":
@@ -110,11 +113,9 @@ def main(filename):
     # print averages
     print(f"Total Number of Pronouns for Females and Males:\n{prp_by_gender}")
     print(f"\nNumber of Females and Males:\n{num_of_gender}")
-    print(f"\nAverage Number of Ponouns by Females:\n{prp_by_gender['F']/num_of_gender['F']}")
-    print(f"\nAverage Number of Ponouns by Males:\n{prp_by_gender['M']/num_of_gender['M']}")
-    make_table(m, f)
-
-    # print(list(itertools.zip_longest(m, f)))
+    print(f"\nAverage Number of Pronouns by Females:\n{prp_by_gender['F']/num_of_gender['F']}")
+    print(f"\nAverage Number of Pronouns by Males:\n{prp_by_gender['M']/num_of_gender['M']}")
+    make_table(filename, m, f)
 
 
 if __name__ == '__main__':

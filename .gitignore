@@ -1,9 +1,11 @@
 .DS_Store
-*.props
-*.xml
-*.zip
-*.csv
-Feb17*
+
+# Homework 1
+HW1/*.props
+HW1/*.xml
+HW1/*.zip
+HW1/*.csv
+HW1/Feb17*
 HW1/.idea/
-/HW1/Results/*
-client_demo.py
+HW1/Results/*
+HW1/client_demo.py
