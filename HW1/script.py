@@ -4,6 +4,8 @@ Social Computing Homework 1
 
 """
 import nltk
+import itertools
+import csv
 import re
 
 
@@ -19,7 +21,6 @@ def parse_turn(turn):
     _line = _turn.split(":", maxsplit=1)
     _name = _line[0].strip()
     _message = _line[1].strip()
-
     _num = get_num_pronouns(_message)
 
     return _time, _name, _message, _num
@@ -28,7 +29,7 @@ def parse_turn(turn):
 def get_num_pronouns(message):
     tokens = nltk.word_tokenize(message)
     pos = nltk.pos_tag(tokens)
-
+    
     num = 0
 
     for part in pos:
@@ -37,16 +38,29 @@ def get_num_pronouns(message):
 
     return num
 
+def make_table(m_list: list, f_list: list):
+    zipped = list(itertools.zip_longest(m_list, f_list))
 
-if __name__ == '__main__':
+    def _build_row(_row, debug: bool = False):
+        return [f"{_row[0][0]}" if _row[0] is not None else "..", 
+                f"{_row[0][1]}" if _row[0] is not None else "..", 
+                f"{_row[1][0]}" if _row[1] is not None else "..", 
+                f"{_row[1][1]}" if _row[1] is not None else ".."]
 
-    with open("Feb17_GroupB.txt") as f:
+    with open("table.csv", "w") as file:
+        table = csv.writer(file)
+        for row in zipped:
+            table.writerow(_build_row(row))
+
+    print(f"\n{list(map(lambda p: p[1], f_list))}")
+    print(f"{list(map(lambda p: p[1], m_list))}")
+
+
+def main(filename):
+    with open("Feb17_GroupA.txt") as f:
         content = f.readlines()
 
-    i = 0
-
     people = {}
-    messages = []
 
     # find name, time, and message for each line
     for l in content:
@@ -66,22 +80,7 @@ if __name__ == '__main__':
         elif name in people.keys():
             people[name]["number_of_prp"] += number
 
-        # add message to list of messages
-        messages.append(
-            {
-                "person": name,
-                "time": time,
-                "index": i,
-                "message": message,
-                "num": number
-            }
-        )
-
-        i += 1
-
-    print(people)
-
-    p_by_gender = {
+    prp_by_gender = {
         "F": 0,
         "M": 0
     }
@@ -91,21 +90,37 @@ if __name__ == '__main__':
         "M": 0
     }
 
+    f = []
+    m = []
+    f_index = 0
+    m_index = 0
+    # update number of prp and number of gender 
     for person in people.keys():
         if people[person]["gender"] == "F":
-            p_by_gender["F"] += people[person]["number_of_prp"]
+            prp_by_gender["F"] += people[person]["number_of_prp"]
             num_of_gender["F"] += 1
+            f_index += 1
+            f.append((f"Female {f_index}", people[person]["number_of_prp"]))
         elif people[person]["gender"] == "M":
-            p_by_gender["M"] += people[person]["number_of_prp"]
+            prp_by_gender["M"] += people[person]["number_of_prp"]
             num_of_gender["M"] += 1
+            m_index += 1
+            m.append((f"Male {m_index}", people[person]["number_of_prp"]))
 
-    print()
-    print(p_by_gender)
+    # print averages
+    print(f"Total Number of Pronouns for Females and Males:\n{prp_by_gender}")
+    print(f"\nNumber of Females and Males:\n{num_of_gender}")
+    print(f"\nAverage Number of Ponouns by Females:\n{prp_by_gender['F']/num_of_gender['F']}")
+    print(f"\nAverage Number of Ponouns by Males:\n{prp_by_gender['M']/num_of_gender['M']}")
+    make_table(m, f)
 
-    print()
-    print(num_of_gender)
+    # print(list(itertools.zip_longest(m, f)))
 
-    print()
-    print(f"avg female prp: {p_by_gender['F']/num_of_gender['F']}")
-    print(f"avg male prp: {p_by_gender['M']/num_of_gender['M']}")
+
+if __name__ == '__main__':
+    print(f"Output for Group A\n{'-' * 20}")
+    main("Feb17_GroupA.txt")
+    print(f"\n\nOutput for Group B\n{'-' * 20}")
+    main("Feb17_GroupB.txt")
+
 

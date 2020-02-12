@@ -1,8 +1,9 @@
 .DS_Store
 *.props
 *.xml
+*.zip
+*.csv
 Feb17*
 HW1/.idea/
 /HW1/Results/*
 client_demo.py
-10.zip
